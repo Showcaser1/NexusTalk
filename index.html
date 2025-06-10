@@ -520,9 +520,11 @@
                 this.users = new Set();
                 this.isTyping = false;
                 this.typingTimeout = null;
+                this.broadcastChannel = null;
 
                 this.initElements();
                 this.bindEvents();
+                this.loadFromStorage();
                 this.showUsernameModal();
                 this.startHeartbeat();
             }
@@ -627,6 +629,14 @@
                 this.hideUsernameModal();
                 this.messageInput.focus();
 
+                // Broadcast user joined
+                if (this.broadcastChannel) {
+                    this.broadcastChannel.postMessage({
+                        type: 'user_joined',
+                        user: this.currentUser
+                    });
+                }
+
                 // Add join message
                 this.addSystemMessage(`${username} joined the server`);
                 this.saveToStorage();
@@ -729,6 +739,14 @@
                     this.dms[message.channel].messages.push(message);
                 }
 
+                // Broadcast to other tabs/windows
+                if (this.broadcastChannel && message.author.id === this.currentUser?.id) {
+                    this.broadcastChannel.postMessage({
+                        type: 'new_message',
+                        message: message
+                    });
+                }
+
                 // Display if current channel
                 if (message.channel === this.currentChannel && message.type === this.currentChannelType) {
                     this.displayMessage(message);
@@ -804,14 +822,27 @@
             }
 
             saveToStorage() {
+                if (!this.currentUser) return;
+                
                 const data = {
                     currentUser: this.currentUser,
                     channels: this.channels,
                     dms: this.dms,
                     users: Array.from(this.users)
                 };
-                // In a real app, this would sync to a server
-                console.log('Data saved:', data);
+                
+                // Simulate server by using BroadcastChannel API for cross-tab communication
+                if (window.BroadcastChannel) {
+                    if (!this.broadcastChannel) {
+                        this.broadcastChannel = new BroadcastChannel('chatflow');
+                        this.broadcastChannel.addEventListener('message', (event) => {
+                            this.handleRemoteMessage(event.data);
+                        });
+                    }
+                }
+                
+                // Store globally accessible data
+                window.ChatFlowData = data;
             }
 
             startHeartbeat() {
@@ -820,6 +851,54 @@
                     // In a real app, this would ping the server
                     console.log('Heartbeat');
                 }, 30000);
+            }
+
+            loadFromStorage() {
+                // Load existing data if available
+                if (window.ChatFlowData) {
+                    const data = window.ChatFlowData;
+                    if (data.channels) {
+                        this.channels = { ...this.channels, ...data.channels };
+                    }
+                    if (data.dms) {
+                        this.dms = data.dms;
+                    }
+                    if (data.users) {
+                        this.users = new Set(data.users);
+                    }
+                }
+            }
+
+            handleRemoteMessage(data) {
+                if (data.type === 'new_message') {
+                    const message = data.message;
+                    
+                    // Don't add our own messages again
+                    if (message.author.id === this.currentUser?.id) return;
+                    
+                    // Add the message without broadcasting again
+                    if (message.type === 'channel') {
+                        if (!this.channels[message.channel]) {
+                            this.channels[message.channel] = { name: message.channel, messages: [] };
+                        }
+                        this.channels[message.channel].messages.push(message);
+                    } else {
+                        if (!this.dms[message.channel]) {
+                            this.dms[message.channel] = { messages: [] };
+                        }
+                        this.dms[message.channel].messages.push(message);
+                    }
+
+                    // Display if current channel
+                    if (message.channel === this.currentChannel && message.type === this.currentChannelType) {
+                        this.displayMessage(message);
+                    }
+                } else if (data.type === 'user_joined') {
+                    this.users.add(data.user);
+                    if (data.user.id !== this.currentUser?.id) {
+                        this.addSystemMessage(`${data.user.username} joined the server`);
+                    }
+                }
             }
         }
 
