@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatFlow - Discord Style</title>
+    <title>ChatFlow - Modern Discord Style</title>
     <style>
         * {
             margin: 0;
@@ -12,11 +12,12 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #36393f;
-            color: #dcddde;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
             height: 100vh;
             overflow: hidden;
+            line-height: 1.5;
         }
 
         .app-container {
@@ -26,27 +27,42 @@
 
         /* Sidebar */
         .sidebar {
-            width: 240px;
-            background: #2f3136;
+            width: 260px;
+            background: #121212;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid #202225;
+            border-right: 1px solid #252525;
         }
 
         .server-header {
             padding: 16px;
-            border-bottom: 1px solid #202225;
-            background: #36393f;
+            background: #1a1a1a;
+            border-bottom: 1px solid #252525;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .server-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #5865f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
         }
 
         .server-name {
-            font-weight: 600;
+            font-weight: 700;
             font-size: 16px;
             color: #fff;
         }
 
         .channels-header {
-            padding: 16px 8px 8px 16px;
+            padding: 16px 16px 8px;
             font-size: 12px;
             font-weight: 600;
             color: #8e9297;
@@ -57,6 +73,16 @@
         .channel-list {
             flex: 1;
             overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .channel-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .channel-list::-webkit-scrollbar-thumb {
+            background: #40444b;
+            border-radius: 2px;
         }
 
         .channel-item {
@@ -64,15 +90,16 @@
             margin: 2px 8px;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: #b0b0b0;
         }
 
         .channel-item:hover {
-            background: #393c43;
-            color: #dcddde;
+            background: #252525;
+            color: #e0e0e0;
         }
 
         .channel-item.active {
@@ -81,13 +108,53 @@
         }
 
         .channel-icon {
-            font-size: 18px;
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        .dm-list {
+            border-top: 1px solid #252525;
+            padding: 8px 0;
+        }
+
+        .dm-item {
+            padding: 8px 16px;
+            margin: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #b0b0b0;
+        }
+
+        .dm-item:hover {
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .dm-item.active {
+            background: #5865f2;
+            color: #fff;
+        }
+
+        .dm-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            position: relative;
         }
 
         .user-area {
-            padding: 16px;
-            background: #292b2f;
-            border-top: 1px solid #202225;
+            padding: 12px 16px;
+            background: #1a1a1a;
+            border-top: 1px solid #252525;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -97,13 +164,13 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #5865f2, #7289da);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             font-size: 14px;
-            color: white;
+            color: #fff;
+            position: relative;
         }
 
         .user-info {
@@ -118,7 +185,11 @@
 
         .user-status {
             font-size: 12px;
-            color: #b9bbbe;
+            color: #72767d;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-actions {
@@ -127,22 +198,33 @@
         }
 
         .user-action-btn {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border: none;
             background: none;
-            color: #b9bbbe;
+            color: #b0b0b0;
             cursor: pointer;
             border-radius: 4px;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .user-action-btn:hover {
-            background: #4f545c;
-            color: #dcddde;
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background: #3ba55c;
+            border-radius: 50%;
+            border: 2px solid #121212;
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
         }
 
         /* Main Chat Area */
@@ -150,59 +232,60 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: #36393f;
+            background: #1e1e1e;
         }
 
         .chat-header {
             padding: 16px;
-            border-bottom: 1px solid #202225;
+            border-bottom: 1px solid #252525;
             display: flex;
             align-items: center;
             gap: 12px;
-            background: #36393f;
+            background: #1e1e1e;
         }
 
         .chat-title {
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 18px;
             color: #fff;
         }
 
         .chat-description {
-            font-size: 14px;
+            font-size: 13px;
             color: #72767d;
         }
 
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 20px;
             scroll-behavior: smooth;
         }
 
         .messages-container::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
 
         .messages-container::-webkit-scrollbar-track {
-            background: #2f3136;
+            background: #1e1e1e;
         }
 
         .messages-container::-webkit-scrollbar-thumb {
-            background: #202225;
-            border-radius: 4px;
+            background: #40444b;
+            border-radius: 3px;
         }
 
         .message {
             margin-bottom: 16px;
             padding: 8px 0;
             position: relative;
+            transition: background 0.2s;
         }
 
         .message:hover {
-            background: rgba(4, 4, 5, 0.07);
-            margin: 0 -16px;
-            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            margin: 0 -20px;
+            padding: 8px 20px;
         }
 
         .message-header {
@@ -216,19 +299,19 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #5865f2, #7289da);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            color: white;
             font-size: 16px;
+            color: #fff;
+            position: relative;
         }
 
         .message-author {
             font-weight: 600;
+            font-size: 15px;
             color: #fff;
-            font-size: 16px;
         }
 
         .message-timestamp {
@@ -239,31 +322,33 @@
 
         .message-content {
             margin-left: 52px;
-            color: #dcddde;
-            line-height: 1.375;
+            color: #d0d0d0;
+            line-height: 1.4;
             word-wrap: break-word;
+            font-size: 15px;
         }
 
         .message-input-container {
             padding: 16px;
-            background: #36393f;
+            background: #1e1e1e;
         }
 
         .message-input-wrapper {
-            background: #40444b;
+            background: #252525;
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
+            transition: all 0.2s;
         }
 
         .message-input {
             flex: 1;
             background: none;
             border: none;
-            color: #dcddde;
-            font-size: 16px;
+            color: #e0e0e0;
+            font-size: 15px;
             outline: none;
             resize: none;
             max-height: 200px;
@@ -277,12 +362,13 @@
         .send-button {
             background: #5865f2;
             border: none;
-            color: white;
+            color: #fff;
             padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.15s ease;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .send-button:hover {
@@ -290,8 +376,16 @@
         }
 
         .send-button:disabled {
-            background: #4f545c;
+            background: #40444b;
             cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            margin-left: 52px;
+            color: #72767d;
+            font-style: italic;
+            font-size: 13px;
+            padding: 8px 0;
         }
 
         /* Modal Styles */
@@ -301,7 +395,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -309,16 +403,17 @@
         }
 
         .modal {
-            background: #36393f;
-            border-radius: 8px;
-            padding: 32px;
-            width: 400px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 24px;
+            width: 420px;
             max-width: 90vw;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         .modal-title {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: #fff;
             margin-bottom: 16px;
             text-align: center;
@@ -327,17 +422,30 @@
         .modal-input {
             width: 100%;
             padding: 12px;
-            background: #40444b;
+            background: #252525;
             border: none;
-            border-radius: 4px;
-            color: #dcddde;
-            font-size: 16px;
-            margin-bottom: 16px;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 15px;
+            margin-bottom: 12px;
             outline: none;
+            transition: all 0.2s;
         }
 
         .modal-input:focus {
-            ring: 2px solid #5865f2;
+            box-shadow: 0 0 0 2px #5865f2;
+        }
+
+        .modal-select {
+            width: 100%;
+            padding: 12px;
+            background: #252525;
+            border: none;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 15px;
+            margin-bottom: 12px;
+            outline: none;
         }
 
         .modal-buttons {
@@ -349,15 +457,16 @@
         .modal-button {
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s;
         }
 
         .modal-button.primary {
             background: #5865f2;
-            color: white;
+            color: #fff;
         }
 
         .modal-button.primary:hover {
@@ -365,41 +474,16 @@
         }
 
         .modal-button.secondary {
-            background: #4f545c;
-            color: #dcddde;
+            background: #40444b;
+            color: #e0e0e0;
         }
 
         .modal-button.secondary:hover {
-            background: #5d6269;
+            background: #4f545c;
         }
 
         .hidden {
             display: none;
-        }
-
-        .online-indicator {
-            width: 12px;
-            height: 12px;
-            background: #3ba55c;
-            border-radius: 50%;
-            border: 2px solid #2f3136;
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-        }
-
-        .typing-indicator {
-            margin-left: 52px;
-            color: #72767d;
-            font-style: italic;
-            font-size: 14px;
-            padding: 8px 0;
-        }
-
-        .dm-list {
-            border-top: 1px solid #202225;
-            margin-top: 8px;
-            padding-top: 8px;
         }
     </style>
 </head>
@@ -408,7 +492,8 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="server-header">
-                <div class="server-name">ChatFlow Server</div>
+                <div class="server-icon">C</div>
+                <div class="server-name">ChatFlow</div>
             </div>
             
             <div class="channels-header">Text Channels</div>
@@ -429,19 +514,24 @@
 
             <div class="channels-header">Direct Messages</div>
             <div class="dm-list" id="dmList">
-                <!-- DMs will be populated here -->
+                <!-- DMs populated dynamically -->
             </div>
 
             <div class="user-area">
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <div class="username" id="displayUsername">Set Username</div>
-                    <div class="user-status">Online</div>
+                    <div class="user-status" id="userStatus">Online</div>
                 </div>
                 <div class="user-actions">
-                    <button class="user-action-btn" id="profileBtn" title="Profile">
+                    <button class="user-action-btn" id="profileBtn" title="Edit Profile">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 6.5V8.5L21 9ZM3 9L9 8.5V6.5L3 7V9ZM15 10.5V8.5L21 9V11L15 10.5ZM9 10.5L3 11V9L9 8.5V10.5ZM12 7C14.21 7 16 8.79 16 11V13H8V11C8 8.79 9.79 7 12 7Z"/>
+                        </svg>
+                    </button>
+                    <button class="user-action-btn" id="startDmBtn" title="Start DM">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM13 11H11V13H9V11H7V9H9V7H11V9H13V11Z"/>
                         </svg>
                     </button>
                 </div>
@@ -465,7 +555,7 @@
                         <div class="message-author">ChatFlow Bot</div>
                         <div class="message-timestamp">Today at 12:00 PM</div>
                     </div>
-                    <div class="message-content">Welcome to ChatFlow! Set your username to start chatting with others.</div>
+                    <div class="message-content">Welcome to ChatFlow! Set your username to start chatting.</div>
                 </div>
             </div>
 
@@ -485,10 +575,18 @@
     <!-- Username Modal -->
     <div class="modal-overlay" id="usernameModal">
         <div class="modal">
-            <div class="modal-title">Set Your Username</div>
+            <div class="modal-title">Set Your Profile</div>
             <input type="text" class="modal-input" id="usernameInput" placeholder="Enter your username" maxlength="32">
+            <input type="text" class="modal-input" id="statusInput" placeholder="Status (e.g., What's up?)" maxlength="128">
+            <select class="modal-select" id="avatarColor">
+                <option value="#5865f2">Blurple</option>
+                <option value="#3ba55c">Green</option>
+                <option value="#f04747">Red</option>
+                <option value="#faa61a">Yellow</option>
+                <option value="#43b581">Emerald</option>
+            </select>
             <div class="modal-buttons">
-                <button class="modal-button primary" id="setUsernameBtn">Set Username</button>
+                <button class="modal-button primary" id="setUsernameBtn">Set Profile</button>
             </div>
         </div>
     </div>
@@ -496,11 +594,31 @@
     <!-- Profile Modal -->
     <div class="modal-overlay hidden" id="profileModal">
         <div class="modal">
-            <div class="modal-title">User Profile</div>
+            <div class="modal-title">Edit Profile</div>
             <input type="text" class="modal-input" id="profileUsernameInput" placeholder="Username" maxlength="32">
+            <input type="text" class="modal-input" id="profileStatusInput" placeholder="Status" maxlength="128">
+            <select class="modal-select" id="profileAvatarColor">
+                <option value="#5865f2">Blurple</option>
+                <option value="#3ba55c">Green</option>
+                <option value="#f04747">Red</option>
+                <option value="#faa61a">Yellow</option>
+                <option value="#43b581">Emerald</option>
+            </select>
             <div class="modal-buttons">
                 <button class="modal-button secondary" id="cancelProfileBtn">Cancel</button>
                 <button class="modal-button primary" id="saveProfileBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start DM Modal -->
+    <div class="modal-overlay hidden" id="startDmModal">
+        <div class="modal">
+            <div class="modal-title">Start a DM</div>
+            <input type="text" class="modal-input" id="dmUsernameInput" placeholder="Enter username" maxlength="32">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" id="cancelDmBtn">Cancel</button>
+                <button class="modal-button primary" id="startDmConfirmBtn">Start DM</button>
             </div>
         </div>
     </div>
@@ -517,7 +635,7 @@
                     gaming: { name: 'gaming', description: 'Gaming discussion', messages: [] }
                 };
                 this.dms = {};
-                this.users = new Set();
+                this.users = new Map();
                 this.isTyping = false;
                 this.typingTimeout = null;
                 this.broadcastChannel = null;
@@ -532,13 +650,20 @@
             initElements() {
                 this.usernameModal = document.getElementById('usernameModal');
                 this.profileModal = document.getElementById('profileModal');
+                this.startDmModal = document.getElementById('startDmModal');
                 this.usernameInput = document.getElementById('usernameInput');
+                this.statusInput = document.getElementById('statusInput');
+                this.avatarColor = document.getElementById('avatarColor');
                 this.profileUsernameInput = document.getElementById('profileUsernameInput');
+                this.profileStatusInput = document.getElementById('profileStatusInput');
+                this.profileAvatarColor = document.getElementById('profileAvatarColor');
+                this.dmUsernameInput = document.getElementById('dmUsernameInput');
                 this.messagesContainer = document.getElementById('messagesContainer');
                 this.messageInput = document.getElementById('messageInput');
                 this.sendButton = document.getElementById('sendButton');
                 this.displayUsername = document.getElementById('displayUsername');
                 this.userAvatar = document.getElementById('userAvatar');
+                this.userStatus = document.getElementById('userStatus');
                 this.currentChannelName = document.getElementById('currentChannelName');
                 this.currentChannelDesc = document.getElementById('currentChannelDesc');
                 this.currentChannelIcon = document.getElementById('currentChannelIcon');
@@ -558,6 +683,14 @@
                 document.getElementById('saveProfileBtn').addEventListener('click', () => this.saveProfile());
                 document.getElementById('cancelProfileBtn').addEventListener('click', () => this.hideProfileModal());
 
+                // Start DM
+                document.getElementById('startDmBtn').addEventListener('click', () => this.showStartDmModal());
+                document.getElementById('startDmConfirmBtn').addEventListener('click', () => this.startDm());
+                document.getElementById('cancelDmBtn').addEventListener('click', () => this.hideStartDmModal());
+                this.dmUsernameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.startDm();
+                });
+
                 // Message sending
                 this.sendButton.addEventListener('click', () => this.sendMessage());
                 this.messageInput.addEventListener('keypress', (e) => {
@@ -574,19 +707,16 @@
                 });
 
                 // Channel switching
-                document.querySelectorAll('.channel-item').forEach(item => {
+                this.bindChannelEvents();
+            }
+
+            bindChannelEvents() {
+                document.querySelectorAll('.channel-item, .dm-list').forEach(item => {
                     item.addEventListener('click', () => {
                         const channel = item.dataset.channel;
                         const type = item.dataset.type;
                         this.switchChannel(channel, type);
                     });
-                });
-
-                // Prevent form submission
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-                        e.preventDefault();
-                    }
                 });
             }
 
@@ -602,11 +732,23 @@
             showProfileModal() {
                 this.profileModal.classList.remove('hidden');
                 this.profileUsernameInput.value = this.currentUser?.username || '';
+                this.profileStatusInput.value = this.currentUser?.status || '';
+                this.profileAvatarColor.value = this.currentUser?.color || '#5865f2';
                 this.profileUsernameInput.focus();
             }
 
             hideProfileModal() {
                 this.profileModal.classList.add('hidden');
+            }
+
+            showStartDmModal() {
+                this.startDmModal.classList.remove('hidden');
+                this.dmUsernameInput.focus();
+            }
+
+            hideStartDmModal() {
+                this.startDmModal.classList.add('hidden');
+                this.dmUsernameInput.value = '';
             }
 
             setUsername() {
@@ -619,13 +761,15 @@
                 this.currentUser = {
                     id: this.generateId(),
                     username: username,
+                    status: this.statusInput.value.trim() || 'Online',
                     avatar: username.charAt(0).toUpperCase(),
-                    joinedAt: new Date()
+                    color: this.avatarColor.value,
+                    joinedAt: new Date(),
+                    online: true
                 };
 
-                this.users.add(this.currentUser);
-                this.displayUsername.textContent = username;
-                this.userAvatar.textContent = this.currentUser.avatar;
+                this.users.set(this.currentUser.id, this.currentUser);
+                this.updateUserDisplay();
                 this.hideUsernameModal();
                 this.messageInput.focus();
 
@@ -637,53 +781,111 @@
                     });
                 }
 
-                // Add join message
                 this.addSystemMessage(`${username} joined the server`);
                 this.saveToStorage();
             }
 
             saveProfile() {
+                if (!this.currentUser) return;
+
                 const newUsername = this.profileUsernameInput.value.trim();
-                if (!newUsername || !this.currentUser) return;
+                if (!newUsername) return;
 
                 const oldUsername = this.currentUser.username;
                 this.currentUser.username = newUsername;
+                this.currentUser.status = this.profileStatusInput.value.trim() || 'Online';
                 this.currentUser.avatar = newUsername.charAt(0).toUpperCase();
-                
-                this.displayUsername.textContent = newUsername;
-                this.userAvatar.textContent = this.currentUser.avatar;
+                this.currentUser.color = this.profileAvatarColor.value;
+
+                this.users.set(this.currentUser.id, this.currentUser);
+                this.updateUserDisplay();
                 this.hideProfileModal();
 
                 if (oldUsername !== newUsername) {
                     this.addSystemMessage(`${oldUsername} changed their name to ${newUsername}`);
                 }
+                this.updateDmList();
                 this.saveToStorage();
             }
 
+            updateUserDisplay() {
+                this.displayUsername.textContent = this.currentUser.username;
+                this.userAvatar.textContent = this.currentUser.avatar;
+                this.userAvatar.style.backgroundColor = this.currentUser.color;
+                this.userStatus.textContent = this.currentUser.status;
+            }
+
+            startDm() {
+                const username = this.dmUsernameInput.value.trim();
+                if (!username || username === this.currentUser?.username) {
+                    this.dmUsernameInput.value = '';
+                    this.dmUsernameInput.focus();
+                    return;
+
+                }
+
+                let targetUser = Array.from(this.users.values()).find(
+                    user => user.username.toLowerCase() === username.toLowerCase()
+                );
+
+                if (!targetUser) {
+                    targetUser = {
+                        id: this.generateId(),
+                        username: username,
+                        avatar: username.charAt(0).toUpperCase(),
+                        color: '#5865f2',
+                        online: false,
+                        status: 'Offline'
+                    };
+                    this.users.set(targetUser.id, targetUser);
+                }
+
+                const dmId = [this.currentUser.id, targetUser.id].sort().join('-');
+                if (!this.dms[dmId]) {
+                    this.dms[dmId] = { dmId: dmId,, targetUser: targetUser, messages: [] };
+                    const dmEntry = document.createElement('div');
+                    dmEntry.classList.add('dm-item');
+                    dmEntry.dataset.channel = dmId; dmId
+                    dmEntry.dataset.type = 'dm';
+                    dmEntry.innerHTML = `
+                        <div class="dmAvatar" style="background-color: ${targetUser.color}">
+                            <span>${targetUser.avatar}</span>
+                            ${targetUser.online ? '<span class="onlineIndicator"></span>' : ''}
+                        </div>
+                        <span>${this.escapeHtml(targetUser.username)}</span>
+                    `;
+                    this.dmList.appendChild(dmEntry);
+                    this.bindChannelEvents();
+                }
+
+                this.hideStartDmModal();
+                this.switchChannel(dmId, 'dm');
+                this.saveToStorage();
+            }
+        }
+
             switchChannel(channelName, type = 'channel') {
-                // Update active channel
-                document.querySelectorAll('.channel-item').forEach(item => {
+                document.querySelectorAll('.channel-item,.dm-item').forEach(item => {
                     item.classList.remove('active');
                 });
-                document.querySelector(`[data-channel="${channelName}"]`).classList.add('active');
+                document.querySelector(`[data-channel="${channelName}"]`)?.classList.add('active');
 
                 this.currentChannel = channelName;
                 this.currentChannelType = type;
 
-                // Update header
                 if (type === 'channel') {
                     this.currentChannelIcon.textContent = '#';
                     this.currentChannelName.textContent = channelName;
                     this.currentChannelDesc.textContent = this.channels[channelName]?.description || '';
                     this.messageInput.placeholder = `Message #${channelName}`;
                 } else {
-                    this.currentChannelIcon.textContent = '@';
-                    this.currentChannelName.textContent = channelName;
-                    this.currentChannelDesc.textContent = 'Direct Message';
-                    this.messageInput.placeholder = `Message @${channelName}`;
+                    this.currentChannelIcon.textContent = '';
+                    const targetUser = this.dms[channelName]?.targetUser;
+                    this.currentChannelName.textContent = targetUser?.username || channelName;
+                    this.currentChannelDesc.textContent = targetUser?.status || 'Direct Message';
+                    this.messageInput.placeholder = `Message @${targetUser?.username || channelName}`;
                 }
 
-                // Load messages
                 this.loadMessages();
             }
 
@@ -726,20 +928,18 @@
             }
 
             addMessage(message) {
-                // Add to appropriate channel/dm
                 if (message.type === 'channel') {
                     if (!this.channels[message.channel]) {
                         this.channels[message.channel] = { name: message.channel, messages: [] };
                     }
-                    this.channels[message.channel].messages.push(message);
+                    this.messages[message].channel].messages.push(message);
                 } else {
                     if (!this.dms[message.channel]) {
-                        this.dms[message.channel] = { messages: [] };
+                        this.dms[message.channel] = { targetUser: this.users.get(message.author.id === this.currentUser?.id ? message.channel.split('-')[1] : message.author.id), messages: [] };
                     }
                     this.dms[message.channel].messages.push(message);
                 }
 
-                // Broadcast to other tabs/windows
                 if (this.broadcastChannel && message.author.id === this.currentUser?.id) {
                     this.broadcastChannel.postMessage({
                         type: 'new_message',
@@ -747,7 +947,6 @@
                     });
                 }
 
-                // Display if current channel
                 if (message.channel === this.currentChannel && message.type === this.currentChannelType) {
                     this.displayMessage(message);
                 }
@@ -765,11 +964,14 @@
 
                 messageDiv.innerHTML = `
                     <div class="message-header">
-                        <div class="message-avatar">${message.author.avatar}</div>
-                        <div class="message-author">${this.escapeHtml(message.author.username)}</div>
-                        <div class="message-timestamp">${time}</div>
+                        <div class="messageAvatar" style="backgroundColor: ${message.author.color}">
+                            <span>${message.author.avatar}</span>
+                            ${message.author.online ? '<span class="onlineIndicator"></span>' : ''}
+                        </div>
+                        <div class="messageAuthor">>${this.escapeHtml(message.author.username)}</div>
+                        <div class="messageTimestamp">Time ${time}</div>
                     </div>
-                    <div class="message-content">${this.escapeHtml(message.content)}</div>
+                    <div class="messageContent">${this.escapeHtml(message.content)}</div>
                 `;
 
                 this.messagesContainer.appendChild(messageDiv);
@@ -779,7 +981,7 @@
             addSystemMessage(content) {
                 const message = {
                     id: this.generateId(),
-                    author: { username: 'System', avatar: '🤖' },
+                    author: { username: 'System', avatar: '🤖', color: '#727272', online: true },
                     content: content,
                     timestamp: new Date(),
                     channel: this.currentChannel,
@@ -792,13 +994,13 @@
             handleTyping() {
                 if (!this.isTyping) {
                     this.isTyping = true;
-                    // In a real app, you'd broadcast typing status
+                    this.typingIndicator.classList.remove('hidden');
                 }
 
                 clearTimeout(this.typingTimeout);
                 this.typingTimeout = setTimeout(() => {
                     this.isTyping = false;
-                    // In a real app, you'd stop broadcasting typing status
+                    this.typingIndicator.classList.add('hidden');
                 }, 2000);
             }
 
@@ -812,7 +1014,7 @@
             }
 
             generateId() {
-                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+                return Date.now().toString(36) + Math.random().toString(36).substring(2);
             }
 
             escapeHtml(text) {
@@ -828,10 +1030,9 @@
                     currentUser: this.currentUser,
                     channels: this.channels,
                     dms: this.dms,
-                    users: Array.from(this.users)
+                    users: Array.from(this.users.entries())
                 };
                 
-                // Simulate server by using BroadcastChannel API for cross-tab communication
                 if (window.BroadcastChannel) {
                     if (!this.broadcastChannel) {
                         this.broadcastChannel = new BroadcastChannel('chatflow');
@@ -841,20 +1042,10 @@
                     }
                 }
                 
-                // Store globally accessible data
                 window.ChatFlowData = data;
             }
 
-            startHeartbeat() {
-                // Simulate connection heartbeat
-                setInterval(() => {
-                    // In a real app, this would ping the server
-                    console.log('Heartbeat');
-                }, 30000);
-            }
-
             loadFromStorage() {
-                // Load existing data if available
                 if (window.ChatFlowData) {
                     const data = window.ChatFlowData;
                     if (data.channels) {
@@ -862,21 +1053,43 @@
                     }
                     if (data.dms) {
                         this.dms = data.dms;
+                        Object.values(this.dms).forEach(dm => {
+                            const dmEntry = document.createElement('div');
+                            dmEntry.classList.add('dm-item');
+                            dmEntry.dataset.channel = dm.dmId;
+                            dmEntry.dataset.type = 'dm';
+                            dmEntry.innerHTML = `
+                                <div class="dm-avatar" style="background-color: ${dm.targetUser.color}">
+                                    <span>${dm.targetUser.avatar}</span>
+                                    ${dm.targetUser.online ? '<span class="online-indicator"></span>' : ''}
+                                </div>
+                                <span>${this.escapeHtml(dm.targetUser.username)}</span>
+                            `;
+                            this.dmList.appendChild(dmEntry);
+                        });
+                        this.bindChannelEvents();
                     }
                     if (data.users) {
-                        this.users = new Set(data.users);
+                        this.users = new Map(data.users);
+                    }
+                    if (data.currentUser) {
+                        this.currentUser = data.currentUser;
+                        this.updateUserDisplay();
                     }
                 }
+            }
+
+            startHeartbeat() {
+                setInterval(() => {
+                    console.log('Heartbeat');
+                }, 30000);
             }
 
             handleRemoteMessage(data) {
                 if (data.type === 'new_message') {
                     const message = data.message;
-                    
-                    // Don't add our own messages again
                     if (message.author.id === this.currentUser?.id) return;
-                    
-                    // Add the message without broadcasting again
+
                     if (message.type === 'channel') {
                         if (!this.channels[message.channel]) {
                             this.channels[message.channel] = { name: message.channel, messages: [] };
@@ -884,25 +1097,24 @@
                         this.channels[message.channel].messages.push(message);
                     } else {
                         if (!this.dms[message.channel]) {
-                            this.dms[message.channel] = { messages: [] };
+                            this.dms[message.channel] = { targetUser: this.users.get(message.author.id), messages: [] };
                         }
                         this.dms[message.channel].messages.push(message);
                     }
 
-                    // Display if current channel
                     if (message.channel === this.currentChannel && message.type === this.currentChannelType) {
                         this.displayMessage(message);
                     }
                 } else if (data.type === 'user_joined') {
-                    this.users.add(data.user);
                     if (data.user.id !== this.currentUser?.id) {
+                        this.users.set(data.user.id, data.user);
                         this.addSystemMessage(`${data.user.username} joined the server`);
+                        this.saveToStorage();
                     }
                 }
             }
         }
 
-        // Initialize the app
         const app = new ChatApp();
     </script>
 </body>
